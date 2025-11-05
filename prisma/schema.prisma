@@ -1,0 +1,38 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Room {
+  id           String        @id @default(cuid())
+  name         String
+  description  String
+  pricePerNight Float
+  capacity     Int
+  amenities    String        // JSON string array
+  imageUrl     String?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  reservations Reservation[]
+}
+
+model Reservation {
+  id          String   @id @default(cuid())
+  roomId      String
+  room        Room     @relation(fields: [roomId], references: [id])
+  guestName   String
+  guestEmail  String
+  checkIn     DateTime
+  checkOut    DateTime
+  totalPrice  Float
+  status      String   @default("confirmed") // confirmed, cancelled
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([roomId])
+  @@index([checkIn, checkOut])
+}
