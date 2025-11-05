@@ -1,4 +1,11 @@
-import type { Room, RoomFilters } from './types';
+import type {
+  Room,
+  RoomFilters,
+  BookingRequest,
+  BookingResponse,
+  AvailabilityCheck,
+  AvailabilityResult,
+} from './types';
 
 export interface ApiResponse<T> {
   success: boolean;
@@ -85,6 +92,36 @@ export async function fetchRoomBySlug(slug: string): Promise<Room> {
 
   if (!response.success || !response.data) {
     throw new Error(response.error || 'Failed to fetch room');
+  }
+
+  return response.data;
+}
+
+export async function checkAvailability(
+  availability: AvailabilityCheck
+): Promise<AvailabilityResult> {
+  const response = await fetchApi<AvailabilityResult>('/api/availability', {
+    method: 'POST',
+    body: JSON.stringify(availability),
+  });
+
+  if (!response.success || !response.data) {
+    throw new Error(response.error || 'Failed to check availability');
+  }
+
+  return response.data;
+}
+
+export async function createBooking(
+  booking: BookingRequest
+): Promise<BookingResponse> {
+  const response = await fetchApi<BookingResponse>('/api/bookings', {
+    method: 'POST',
+    body: JSON.stringify(booking),
+  });
+
+  if (!response.success || !response.data) {
+    throw new Error(response.error || 'Failed to create booking');
   }
 
   return response.data;

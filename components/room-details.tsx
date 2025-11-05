@@ -1,7 +1,9 @@
 'use client';
 
+import { useState } from 'react';
 import { ImageCarousel } from './image-carousel';
 import { AmenityTag } from './amenity-tag';
+import { BookingModal } from './booking-modal';
 import type { Room } from '@/lib/types';
 
 export interface RoomDetailsProps {
@@ -10,6 +12,8 @@ export interface RoomDetailsProps {
 }
 
 export function RoomDetails({ room, className }: RoomDetailsProps) {
+  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
+
   const discount = room.nightlyRateOriginal
     ? Math.round(
         ((room.nightlyRateOriginal - room.nightlyRate) /
@@ -207,13 +211,14 @@ export function RoomDetails({ room, className }: RoomDetailsProps) {
 
             {/* Book button */}
             <button
-              className="w-full rounded-lg bg-amber-600 px-4 py-3 font-semibold text-white transition-colors hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
+              className="w-full rounded-lg bg-amber-600 px-4 py-3 font-semibold text-white transition-colors hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 disabled:bg-gray-400 dark:focus:ring-offset-gray-800"
               disabled={room.availability.available === 0}
-              onClick={() => {
-                alert(
-                  'Booking functionality would be implemented in a real application'
-                );
-              }}
+              onClick={() => setIsBookingModalOpen(true)}
+              aria-label={
+                room.availability.available > 0
+                  ? 'Open booking form'
+                  : 'Room not available'
+              }
             >
               {room.availability.available > 0
                 ? 'Reserve Room'
@@ -222,6 +227,12 @@ export function RoomDetails({ room, className }: RoomDetailsProps) {
           </div>
         </div>
       </div>
+
+      <BookingModal
+        room={room}
+        isOpen={isBookingModalOpen}
+        onClose={() => setIsBookingModalOpen(false)}
+      />
     </div>
   );
 }
