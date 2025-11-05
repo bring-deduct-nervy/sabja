@@ -1,0 +1,32 @@
+{
+  "name": "hotel-management",
+  "version": "1.0.0",
+  "description": "Hotel management system with Prisma ORM",
+  "main": "index.js",
+  "scripts": {
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:generate": "prisma generate",
+    "prisma:seed": "tsx prisma/seed.ts",
+    "prisma:studio": "prisma studio",
+    "prisma:reset": "prisma migrate reset"
+  },
+  "keywords": [
+    "hotel",
+    "prisma",
+    "typescript"
+  ],
+  "author": "",
+  "license": "ISC",
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "prisma": "^5.7.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.7.0"
+  }
+}

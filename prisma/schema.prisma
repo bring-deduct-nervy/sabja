@@ -1,0 +1,106 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  // Development: SQLite
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+  
+  // Production: PostgreSQL (uncomment below and comment out SQLite above)
+  // provider = "postgresql"
+  // url      = env("DATABASE_URL")
+}
+
+// Room model - represents hotel rooms
+model Room {
+  id          String   @id @default(cuid())
+  roomNumber  String   @unique
+  capacity    Int
+  bedType     String   // e.g., "King", "Queen", "Twin", "Double"
+  price       Float    // price per night
+  description String
+  imageUrls   String   // JSON array stored as string, e.g., ["url1", "url2"]
+  isAvailable Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  reservations Reservation[]
+  amenities    RoomAmenity[]
+
+  @@map("rooms")
+}
+
+// Amenity model - represents hotel amenities/services
+model Amenity {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  icon        String?  // icon name or URL for UI display
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  rooms RoomAmenity[]
+
+  @@map("amenities")
+}
+
+// Junction table for Room-Amenity many-to-many relationship
+model RoomAmenity {
+  id        String   @id @default(cuid())
+  roomId    String
+  amenityId String
+  createdAt DateTime @default(now())
+
+  // Relations
+  room    Room    @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  amenity Amenity @relation(fields: [amenityId], references: [id], onDelete: Cascade)
+
+  @@unique([roomId, amenityId])
+  @@map("room_amenities")
+}
+
+// Reservation model - represents room bookings
+model Reservation {
+  id            String   @id @default(cuid())
+  roomId        String
+  guestName     String
+  guestEmail    String
+  guestPhone    String
+  checkInDate   DateTime
+  checkOutDate  DateTime
+  numberOfGuests Int
+  status        String   @default("PENDING") // Valid values: PENDING, CONFIRMED, CHECKED_IN, CHECKED_OUT, CANCELLED
+  totalPrice    Float
+  specialRequests String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relations
+  room Room @relation(fields: [roomId], references: [id], onDelete: Cascade)
+
+  @@map("reservations")
+}
+
+// Note: ReservationStatus enum not used in SQLite
+// For PostgreSQL, you can use: enum ReservationStatus { PENDING, CONFIRMED, CHECKED_IN, CHECKED_OUT, CANCELLED }
+
+// GalleryImage model - represents hotel gallery images
+model GalleryImage {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  imageUrl    String
+  category    String   // e.g., "rooms", "restaurant", "pool", "exterior", "amenities"
+  displayOrder Int     @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("gallery_images")
+}
