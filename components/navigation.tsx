@@ -7,6 +7,7 @@ import { Container } from './ui/container';
 
 const navItems = [
   { label: 'Home', href: '/' },
+  { label: 'Rooms', href: '/rooms' },
   { label: 'Accommodations', href: '/accommodations' },
   { label: 'Dining', href: '/dining' },
   { label: 'Experiences', href: '/experiences' },
